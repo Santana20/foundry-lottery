@@ -1,6 +1,17 @@
-## Foundry
+# Random Raffle Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## About
+
+This code is to create a random smart contract lottery.
+
+## What we do?
+
+1. Users can enter by paying for a ticket.
+   1. The ticket fees are going to go to the winner during the draw.
+2. After X period of time, the lorrey will automatically draw a winner.
+   1. This will be done programatically.
+3. Using Chainlink VRF & Chainlink Automation for Randomness and Time based Trigger respectively.
+
 
 Foundry consists of:
 
