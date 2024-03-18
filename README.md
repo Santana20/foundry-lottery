@@ -20,6 +20,13 @@ Foundry consists of:
 -   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
 -   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
+## Tests
+1. Write some deploy scripts
+2. Write our tests
+   1. Work on a local chain
+   2. Forked Testnet
+   3. Forked Mainnet
+
 ## Documentation
 
 https://book.getfoundry.sh/
