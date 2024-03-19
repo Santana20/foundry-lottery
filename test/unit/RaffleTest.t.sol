@@ -91,4 +91,97 @@ contract RaffleTest is Test {
         raffle.enterRaffle{value: entranceFee}();
 
     }
+
+    /* CheckUpKeep */
+
+    function test_CheckUpKeep_ShouldReturnFalse_WhenItHasNoBalance() public {
+        //setUp
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+        //execution
+        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+
+        //assert
+        assert(!upkeepNeeded);
+    }
+
+    function test_CheckUpKeep_ShouldReturnFalse_WhenRaffleIsNotOpen() public {
+        //setUp
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+        raffle.performUpkeep("");
+        //execution
+        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+
+        //assert
+        assert(!upkeepNeeded);
+    }
+
+    function test_CheckUpKeep_ShouldReturnsFalse_WhenEnoughTimeHasntPassed() public {
+        //setUp
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+
+        //execution
+        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+
+        //assert
+        assert(!upkeepNeeded);
+    }
+
+    /* function test_CheckUpKeep_ShouldReturnsTrue_WhenParametersAreGood() public {
+        //setUp
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+        raffle.performUpkeep("");
+
+        /// do fulfillRandomWords to change state of Raffle to Open.
+        
+
+        //execution
+        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+
+        //assert
+        assert(upkeepNeeded);
+    } */
+
+    /* PerformUpKeep */
+
+    function test_PerformUpKeep_ShouldOnlyRun_WhenCheckUpKeepIsTrue() public {
+        //setUp
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+
+        //execution - this should run without problem
+        raffle.performUpkeep("");
+        //assert
+    }
+
+    function test_PerformUpKeep_ShouldReverts_WhenCheckUpKeepIsFalse() public {
+        //setUp
+        uint256 currentBalance = 0;
+        uint256 numPlayers = 0;
+        uint256 raffleState = 0;
+
+        
+        //execution, assert
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Raffle.Raffle__UpkeepNotNeeded.selector,
+                currentBalance,
+                numPlayers,
+                raffleState
+            )
+        );
+        raffle.performUpkeep("");
+    }
 }
