@@ -5,6 +5,7 @@ import {Script} from "forge-std/Script.sol";
 import {Raffle} from "../src/Raffle.sol";
 
 import {HelperConfig} from "./HelperConfig.s.sol";
+import {CreateSubscription} from "./Interactions.s.sol";
 
 contract DeployRaffle is Script {
     function run() external returns(Raffle, HelperConfig) {
@@ -15,8 +16,20 @@ contract DeployRaffle is Script {
             address vrfCoordinator,
             bytes32 gasLane,
             uint64 subscriptionId,
-            uint32 callbackGasLimit
+            uint32 callbackGasLimit,
+            address linkTokenAddress
         ) = helperConfig.activeNetworkConfig();
+
+        if (subscriptionId == 0) {
+
+            // create subscription
+            CreateSubscription createSubscription = new CreateSubscription();
+            subscriptionId = createSubscription.createSubscription(vrfCoordinator);
+
+            // fund it
+
+
+        }
 
         vm.startBroadcast();
         Raffle raffle = new Raffle(
