@@ -95,20 +95,20 @@ contract RaffleTest is Test {
 
     }
 
-    /* CheckUpKeep */
+    /* checkUpkeep */
 
-    function test_CheckUpKeep_ShouldReturnFalse_WhenItHasNoBalance() public {
+    function test_checkUpkeep_ShouldReturnFalse_WhenItHasNoBalance() public {
         //setUp
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
         //execution
-        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         //assert
         assert(!upkeepNeeded);
     }
 
-    function test_CheckUpKeep_ShouldReturnFalse_WhenRaffleIsNotOpen() public {
+    function test_checkUpkeep_ShouldReturnFalse_WhenRaffleIsNotOpen() public {
         //setUp
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
@@ -117,25 +117,25 @@ contract RaffleTest is Test {
         vm.roll(block.number + 1);
         raffle.performUpkeep("");
         //execution
-        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         //assert
         assert(!upkeepNeeded);
     }
 
-    function test_CheckUpKeep_ShouldReturnsFalse_WhenEnoughTimeHasntPassed() public {
+    function test_checkUpkeep_ShouldReturnsFalse_WhenEnoughTimeHasntPassed() public {
         //setUp
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
 
         //execution
-        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         //assert
         assert(!upkeepNeeded);
     }
 
-    function test_CheckUpKeep_ShouldReturnsTrue_WhenParametersAreGood() public {
+    function test_checkUpkeep_ShouldReturnsTrue_WhenParametersAreGood() public {
         //setUp
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
@@ -144,7 +144,7 @@ contract RaffleTest is Test {
         vm.roll(block.number + 1);
 
         //execution
-        (bool upkeepNeeded,) = raffle.checkUpKeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         //assert
         assert(upkeepNeeded);
@@ -152,7 +152,7 @@ contract RaffleTest is Test {
 
     /* PerformUpKeep */
 
-    function test_PerformUpKeep_ShouldOnlyRun_WhenCheckUpKeepIsTrue() public {
+    function test_PerformUpKeep_ShouldOnlyRun_WhencheckUpkeepIsTrue() public {
         //setUp
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
@@ -165,7 +165,7 @@ contract RaffleTest is Test {
         //assert
     }
 
-    function test_PerformUpKeep_ShouldReverts_WhenCheckUpKeepIsFalse() public {
+    function test_PerformUpKeep_ShouldReverts_WhencheckUpkeepIsFalse() public {
         //setUp
         uint256 currentBalance = address(raffle).balance; // be zero
         uint256 numPlayers = 0;

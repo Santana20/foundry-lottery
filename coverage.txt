@@ -528,7 +528,7 @@ Anchors for Contract "DeployRaffle" (solc 0.8.19+commit.7dd6d404.Linux.gcc, sour
 
 Anchors for Contract "Raffle" (solc 0.8.19+commit.7dd6d404.Linux.gcc, source ID 35):
 - IC 295 -> Item 230
-  - Refers to item: Function "checkUpKeep" (location: source ID 35, line 77, chars 2557-3050, hits: 2)
+  - Refers to item: Function "checkUpkeep" (location: source ID 35, line 77, chars 2557-3050, hits: 2)
 - IC 1493 -> Item 231
   - Refers to item: Line (location: source ID 35, line 81, chars 2698-2768, hits: 4)
 - IC 1493 -> Item 232

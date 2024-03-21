@@ -3,6 +3,7 @@ pragma solidity ^0.8.18;
 
 import {VRFCoordinatorV2Interface} from "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import {VRFConsumerBaseV2} from "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
 /**
  * @title Raffle Contract
@@ -10,7 +11,7 @@ import {VRFConsumerBaseV2} from "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2
  * @notice This contract is for creating a sample raffle.
  * @dev Learning about implementation of Chainlink VRF & Chainlink Automation.
  */
-contract Raffle is VRFConsumerBaseV2 {
+contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     error Raffle__NotEnoughEthSent();
     error Raffle__NotEnoughTimePassed();
     error Raffle__TransferFailed();
@@ -75,9 +76,9 @@ contract Raffle is VRFConsumerBaseV2 {
      * 3. The cantract has ETH (aka, palyers).
      * 4. (Implicit) The SUBSCRIPTION is funded with LINK.
      */
-    function checkUpKeep(
+    function checkUpkeep(
         bytes memory /* checkData */
-    ) public view returns(bool upkeepNeeded, bytes memory performData) {
+    ) public view override returns(bool upkeepNeeded, bytes memory /* performData */) {
 
         bool timeHasPassed = (block.timestamp - s_lastTimeStamp) >= i_interval;
         bool isOpen = RaffleState.OPEN == s_raffleState;
@@ -89,8 +90,8 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     // function pickWinner() external {
-    function performUpkeep(bytes calldata /* performData */) external {
-        (bool upkeepNeeded,) = checkUpKeep('');
+    function performUpkeep(bytes calldata /* performData */) external override {
+        (bool upkeepNeeded,) = checkUpkeep('');
         if(!upkeepNeeded) {
             revert Raffle__UpkeepNotNeeded(
                 address(this).balance,
@@ -111,7 +112,6 @@ contract Raffle is VRFConsumerBaseV2 {
         );
         emit RequestedRaffleWinner(requestId);
 
-        // 2. Get the random number.
     }
 
     // CEI: CHECKS, EFFECTS, INTERACTIONS.
