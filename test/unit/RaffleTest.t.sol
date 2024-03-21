@@ -37,6 +37,7 @@ contract RaffleTest is Test {
             gasLane,
             subscriptionId,
             callbackGasLimit,
+            ,
         ) = helperConfig.activeNetworkConfig();
 
         vm.deal(PLAYER, STARTING_USER_BALANCE);
@@ -166,11 +167,10 @@ contract RaffleTest is Test {
 
     function test_PerformUpKeep_ShouldReverts_WhenCheckUpKeepIsFalse() public {
         //setUp
-        uint256 currentBalance = 0;
+        uint256 currentBalance = address(raffle).balance; // be zero
         uint256 numPlayers = 0;
-        uint256 raffleState = 0;
+        Raffle.RaffleState raffleState = raffle.getRaffleState();
 
-        
         //execution, assert
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -181,14 +181,6 @@ contract RaffleTest is Test {
             )
         );
         raffle.performUpkeep("");
-    }
-
-    modifier raffleEnteredAndTimePassed() {
-        vm.prank(PLAYER);
-        raffle.enterRaffle{value: entranceFee}();
-        vm.warp(block.timestamp + interval + 1);
-        vm.roll(block.number + 1);
-        _;
     }
 
     function test_PerformUpKeep_ShouldUpdatesRaffleStateAndEmitsRequestId_WhenItExecCorrectly() 
@@ -212,7 +204,7 @@ contract RaffleTest is Test {
 
     function test_FulFillRandomWords_ShouldOnlyBeCalled_WhenPerformUpKeepWasCalled(
         uint256 randomRequestId
-    ) public raffleEnteredAndTimePassed {
+    ) public raffleEnteredAndTimePassed skipFork {
         //setUp
         vm.expectRevert("nonexistent request");
         
@@ -224,7 +216,7 @@ contract RaffleTest is Test {
     }
 
     function test_FulfillRandomWords_ShouldPicksAWinnerResetsAndSendsMony_WhenExec() 
-    public raffleEnteredAndTimePassed {
+    public raffleEnteredAndTimePassed skipFork {
         //setUp
         uint256 additionalEntrants = 5;
         uint256 startingIndex = 1;
@@ -257,5 +249,20 @@ contract RaffleTest is Test {
         assert(raffle.getLengthOfPlayers() == 0);
         assert(raffle.getLastTimeStamp() > previousTimeStamp);
         assert(raffle.getRecentWinner().balance == (STARTING_USER_BALANCE + prize - entranceFee));
+    }
+
+    modifier raffleEnteredAndTimePassed() {
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+        _;
+    }
+
+    modifier skipFork() {
+        if(block.chainid != 31337) {
+            return;
+        }
+        _;
     }
 }
